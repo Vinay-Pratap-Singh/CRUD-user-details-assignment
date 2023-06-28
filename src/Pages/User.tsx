@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { AppDispatch, RootState } from "../Redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewUser } from "../Redux/userSlice";
 
 interface IformData {
   _id?: string;
@@ -14,12 +17,14 @@ const User = () => {
   const { operation } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
-  console.log(state);
+  const { loading } = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm<IformData>({
     defaultValues:
@@ -35,8 +40,22 @@ const User = () => {
   });
 
   // function to handle the form submit
-  const onFormSubmit: SubmitHandler<IformData> = (data) => {
-    console.log(data);
+  const onFormSubmit: SubmitHandler<IformData> = async (data) => {
+    // checking for request type
+    if (operation === "add") {
+      const res = await dispatch(addNewUser(data));
+      console.log(res.payload);
+
+      if (res?.payload?.data) {
+        console.log("inside");
+        reset();
+      } else {
+        const { age, firstName, lastName, phoneNumber, _id } = watch();
+        reset({ age, firstName, lastName, phoneNumber, _id });
+      }
+    } else {
+      // await dispatch
+    }
   };
 
   // checking invalid route
@@ -183,6 +202,7 @@ const User = () => {
           {/* submit button */}
           <button
             type="submit"
+            disabled={loading}
             className="bg-teal-500 w-full text-white py-2 font-bold"
           >
             {operation === "add" ? "Add user" : "Update user"}

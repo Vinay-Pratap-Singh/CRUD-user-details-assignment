@@ -30,12 +30,30 @@ export const getAllUsers = createAsyncThunk("user/get/all", async () => {
   }
 });
 
-// function to get all users
+// function to get individual users
 export const getIndividualUser = createAsyncThunk(
   "/user",
   async (userID: string) => {
     try {
       const res = await axiosInstance.get(`/user/${userID}`);
+      return res.data;
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+);
+
+// function to add new user
+export const addNewUser = createAsyncThunk(
+  "/newuser",
+  async (data: IuserDetails) => {
+    try {
+      const res = await axiosInstance.post("user/create", {
+        firstName: data?.firstName,
+        lastName: data?.lastName,
+        phoneNumber: data?.phoneNumber,
+        age: Number(data?.age),
+      });
       return res.data;
     } catch (error: any) {
       toast.error(error?.response?.data?.message);
@@ -65,11 +83,31 @@ const userSlice = createSlice({
       })
 
       // for get individual users
+      .addCase(getIndividualUser.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(getIndividualUser.fulfilled, (state, action) => {
         console.log(action.payload);
+        state.loading = false;
       })
-      .addCase(getIndividualUser.rejected, () => {
+      .addCase(getIndividualUser.rejected, (state) => {
         toast.error("Failed to load user data");
+        state.loading = false;
+      })
+
+      // for add new user
+      .addCase(addNewUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addNewUser.fulfilled, (state, action) => {
+        if (action?.payload) {
+          toast.success(action?.payload?.message);
+        }
+        state.loading = false;
+      })
+      .addCase(addNewUser.rejected, (state) => {
+        toast.error("Failed to add user");
+        state.loading = false;
       });
   },
 });
