@@ -29,4 +29,4 @@ It is a simple admin dashboard for performing the CRUD operation over the user.
 
 This project is deployed on the netlify, which can seen by the below link-
 
-[Project Link]("https://crud-demo-pw.netlify.app/")
+[Project Link](https://crud-demo-pw.netlify.app/)
