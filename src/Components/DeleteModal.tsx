@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import { deleteUser, getAllUsers } from "../Redux/userSlice";
+import { IuserDetails, deleteUser, getAllUsers } from "../Redux/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 
@@ -8,11 +8,13 @@ interface Iprops {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   userID: string;
+  setUserToBeDisplayed: React.Dispatch<React.SetStateAction<IuserDetails[]>>;
 }
 const DeleteModal: React.FC<Iprops> = ({
   isModalOpen,
   setIsModalOpen,
   userID,
+  setUserToBeDisplayed,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { loading } = useSelector((state: RootState) => state.user);
@@ -21,7 +23,8 @@ const DeleteModal: React.FC<Iprops> = ({
 
     if (res?.payload?.message === "Deleted user") {
       setIsModalOpen(false);
-      await dispatch(getAllUsers());
+      const res = await dispatch(getAllUsers());
+      setUserToBeDisplayed(res?.payload?.data as IuserDetails[]);
     }
   };
   return (

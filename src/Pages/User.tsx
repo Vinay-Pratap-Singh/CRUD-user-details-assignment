@@ -199,6 +199,7 @@ const User = () => {
                     value: true,
                     message: "Please enter your age",
                   },
+                  min: { value: 10, message: "Minimum age is 10" },
                 })}
               />
             </label>

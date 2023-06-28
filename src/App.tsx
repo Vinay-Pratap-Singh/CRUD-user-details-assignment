@@ -44,8 +44,8 @@ const App = () => {
   // getting the user's data
   useEffect(() => {
     (async () => {
-      await dispatch(getAllUsers());
-      setUserToBeDisplayed(users);
+      const res = await dispatch(getAllUsers());
+      setUserToBeDisplayed(res?.payload?.data as IuserDetails[]);
     })();
   }, []);
 
@@ -203,6 +203,7 @@ const App = () => {
                   isModalOpen={isModalOpen}
                   setIsModalOpen={setIsModalOpen}
                   userID={idToBeDeleted}
+                  setUserToBeDisplayed={setUserToBeDisplayed}
                 />
               )}
             </div>
