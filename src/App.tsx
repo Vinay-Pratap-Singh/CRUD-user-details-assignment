@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const App = () => {
   return (
     <div className="space-y-5 mt-5">
@@ -24,9 +26,11 @@ const App = () => {
                 </form>
 
                 {/* button to add new user */}
-                <button className="px-3 py-1 border-2 border-black rounded-md font-medium">
-                  Add new user
-                </button>
+                <Link to={"/user"}>
+                  <button className="px-3 py-1 border-2 border-black rounded-md font-medium">
+                    Add new user
+                  </button>
+                </Link>
               </div>
 
               <table className="min-w-full text-left text-sm font-light">
