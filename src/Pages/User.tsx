@@ -185,7 +185,7 @@ const User = () => {
             type="submit"
             className="bg-teal-500 w-full text-white py-2 font-bold"
           >
-            Add user
+            {operation === "add" ? "Add user" : "Update user"}
           </button>
         </form>
       </div>

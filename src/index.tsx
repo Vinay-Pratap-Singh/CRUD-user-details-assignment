@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import routes from "./Router/Routes";
 import { Provider } from "react-redux";
 import { store } from "./Redux/store";
+import { Toaster } from "react-hot-toast";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,6 +15,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={routes} />
+      <Toaster />
     </Provider>
   </React.StrictMode>
 );
