@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppDispatch, RootState } from "../Redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewUser } from "../Redux/userSlice";
+import { addNewUser, updateUser } from "../Redux/userSlice";
 
 interface IformData {
   _id?: string;
@@ -44,17 +44,22 @@ const User = () => {
     // checking for request type
     if (operation === "add") {
       const res = await dispatch(addNewUser(data));
-      console.log(res.payload);
 
       if (res?.payload?.data) {
-        console.log("inside");
         reset();
       } else {
         const { age, firstName, lastName, phoneNumber, _id } = watch();
         reset({ age, firstName, lastName, phoneNumber, _id });
       }
     } else {
-      // await dispatch
+      const res = await dispatch(updateUser(data));
+
+      if (res?.payload?.data) {
+        reset();
+      } else {
+        const { age, firstName, lastName, phoneNumber, _id } = watch();
+        reset({ age, firstName, lastName, phoneNumber, _id });
+      }
     }
   };
 
@@ -148,7 +153,7 @@ const User = () => {
                     ? "focus:outline-red-500"
                     : "focus:outline-teal-600 "
                 }`}
-                type="number"
+                type="text"
                 placeholder="9874563210"
                 {...register("phoneNumber", {
                   required: {

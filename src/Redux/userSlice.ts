@@ -61,6 +61,24 @@ export const addNewUser = createAsyncThunk(
   }
 );
 
+// function to update user
+export const updateUser = createAsyncThunk(
+  "/updateuser",
+  async (data: IuserDetails) => {
+    try {
+      const res = await axiosInstance.patch(`user/${data?._id}`, {
+        firstName: data?.firstName,
+        lastName: data?.lastName,
+        phoneNumber: data?.phoneNumber,
+        age: Number(data?.age),
+      });
+      return res.data;
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "userSlice",
   initialState,
@@ -107,6 +125,21 @@ const userSlice = createSlice({
       })
       .addCase(addNewUser.rejected, (state) => {
         toast.error("Failed to add user");
+        state.loading = false;
+      })
+
+      // for update user
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        if (action?.payload) {
+          toast.success(action?.payload?.message);
+        }
+        state.loading = false;
+      })
+      .addCase(updateUser.rejected, (state) => {
+        toast.error("Failed to update user");
         state.loading = false;
       });
   },
