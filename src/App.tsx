@@ -26,7 +26,7 @@ const App = () => {
                 </form>
 
                 {/* button to add new user */}
-                <Link to={"/user"}>
+                <Link to={"/user/add"}>
                   <button className="px-3 py-1 border-2 border-black rounded-md font-medium">
                     Add new user
                   </button>

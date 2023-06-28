@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 interface IformData {
   _id?: string;
@@ -10,23 +11,49 @@ interface IformData {
 }
 
 const User = () => {
+  const { operation } = useParams();
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  console.log(state);
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<IformData>();
+  } = useForm<IformData>({
+    defaultValues:
+      operation === "update"
+        ? {
+            _id: state?._id,
+            age: state?.age,
+            firstName: state?.firstName,
+            lastName: state?.lastName,
+            phoneNumber: state?.phoneNumber,
+          }
+        : {},
+  });
 
   // function to handle the form submit
   const onFormSubmit: SubmitHandler<IformData> = (data) => {
     console.log(data);
   };
 
+  // checking invalid route
+  useEffect(() => {
+    if (operation !== "add" && operation !== "update") {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center h-screen ">
       <div className="w-96 shadow-md p-4 rounded-md space-y-5">
         <h1 className="text-center text-2xl font-bold">
-          <span className="text-teal-500">Add new</span> user
+          <span className="text-teal-500">
+            {operation === "add" ? "Add new" : "Update"}
+          </span>{" "}
+          user
         </h1>
 
         {/* adding the form to take user input */}

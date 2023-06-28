@@ -8,7 +8,7 @@ const routes = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/user",
+    path: "/user/:operation",
     element: <User />,
   },
 ]);
