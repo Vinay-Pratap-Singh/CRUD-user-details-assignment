@@ -56,6 +56,7 @@ const User = () => {
 
       if (res?.payload?.data) {
         reset();
+        navigate("/");
       } else {
         const { age, firstName, lastName, phoneNumber, _id } = watch();
         reset({ age, firstName, lastName, phoneNumber, _id });

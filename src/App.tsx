@@ -2,26 +2,53 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./Redux/store";
 import { useEffect, useState } from "react";
-import {
-  IuserDetails,
-  getAllUsers,
-  getIndividualUser,
-} from "./Redux/userSlice";
+import { IuserDetails, getAllUsers } from "./Redux/userSlice";
 import DeleteModal from "./Components/DeleteModal";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+interface Isearch {
+  searchedName: string;
+}
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { loading, users } = useSelector((state: RootState) => state.user);
+  const { users } = useSelector((state: RootState) => state.user);
+  const [userToBeDisplayed, setUserToBeDisplayed] =
+    useState<IuserDetails[]>(users);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idToBeDeleted, setIdToBeDeleted] = useState("");
+
+  const { register, handleSubmit } = useForm<Isearch>({
+    defaultValues: { searchedName: "" },
+  });
+
+  // function to handle search
+  const handleSearch: SubmitHandler<Isearch> = (data) => {
+    if (data.searchedName === "") {
+      setUserToBeDisplayed(users);
+      return;
+    }
+    const newData = users.filter((user: IuserDetails) => {
+      return (
+        user?.firstName
+          .toLowerCase()
+          .includes(data.searchedName.toLowerCase()) ||
+        user?.lastName.toLowerCase().includes(data.searchedName.toLowerCase())
+      );
+    });
+    setUserToBeDisplayed(newData);
+  };
 
   // getting the user's data
   useEffect(() => {
     (async () => {
       await dispatch(getAllUsers());
+      setUserToBeDisplayed(users);
     })();
   }, []);
+
   return (
     <div className="space-y-5 mt-5">
       <h1 className="text-center text-2xl font-bold">
@@ -35,11 +62,15 @@ const App = () => {
             <div className="overflow-hidden space-y-5">
               <div className="w-full flex items-center justify-between">
                 {/* adding the search functionality */}
-                <form action="" className="border-2 border-black rounded-md">
+                <form
+                  onSubmit={handleSubmit(handleSearch)}
+                  className="border-2 border-black rounded-md focus-within:border-teal-500"
+                >
                   <input
                     type="text"
                     placeholder="Search user"
                     className=" px-3 py-1 focus:outline-none rounded-md"
+                    {...register("searchedName")}
                   />
                   <button className="px-3 py-1 border-l-2 border-black font-medium">
                     Search
@@ -48,7 +79,7 @@ const App = () => {
 
                 {/* button to add new user */}
                 <Link to={"/user/add"}>
-                  <button className="px-3 py-1 border-2 border-black rounded-md font-medium">
+                  <button className="px-3 py-1 border-2 border-black rounded-md font-medium hover:border-teal-500">
                     Add new user
                   </button>
                 </Link>
@@ -78,12 +109,17 @@ const App = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.length === 0 ? (
-                    <tr className="col-span-6 font-medium">
-                      Oops! there is no user
+                  {userToBeDisplayed.length === 0 ? (
+                    <tr className="font-medium text-center">
+                      <td
+                        colSpan={6}
+                        className="whitespace-nowrap px-6 py-4 font-medium"
+                      >
+                        Oops! there is no user
+                      </td>
                     </tr>
                   ) : (
-                    users.map((user: IuserDetails, index) => {
+                    userToBeDisplayed.map((user: IuserDetails, index) => {
                       return (
                         <tr
                           key={user?._id}
