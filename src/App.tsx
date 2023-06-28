@@ -1,23 +1,25 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./Redux/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   IuserDetails,
   getAllUsers,
   getIndividualUser,
 } from "./Redux/userSlice";
+import DeleteModal from "./Components/DeleteModal";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { loading, users } = useSelector((state: RootState) => state.user);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [idToBeDeleted, setIdToBeDeleted] = useState("");
 
   // getting the user's data
   useEffect(() => {
     (async () => {
       await dispatch(getAllUsers());
-      // await dispatch(getIndividualUser("649c735a0114f8c5afb69643"));
     })();
   }, []);
   return (
@@ -129,7 +131,13 @@ const App = () => {
                             </button>
 
                             {/* adding the delete button */}
-                            <button className="hover:text-red-500">
+                            <button
+                              className="hover:text-red-500"
+                              onClick={() => {
+                                setIdToBeDeleted(user?._id!);
+                                setIsModalOpen(true);
+                              }}
+                            >
                               {" "}
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -153,6 +161,14 @@ const App = () => {
                   )}
                 </tbody>
               </table>
+              {isModalOpen && (
+                <DeleteModal
+                  key={idToBeDeleted}
+                  isModalOpen={isModalOpen}
+                  setIsModalOpen={setIsModalOpen}
+                  userID={idToBeDeleted}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -79,6 +79,19 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+// function to delete user
+export const deleteUser = createAsyncThunk(
+  "/userdelete",
+  async (userID: string) => {
+    try {
+      const res = await axiosInstance.delete(`/user/${userID}`);
+      return res.data;
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "userSlice",
   initialState,
@@ -140,6 +153,21 @@ const userSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state) => {
         toast.error("Failed to update user");
+        state.loading = false;
+      })
+
+      // for delete user
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        if (action?.payload) {
+          toast.success(action?.payload?.message);
+        }
+        state.loading = false;
+      })
+      .addCase(deleteUser.rejected, (state) => {
+        toast.error("Failed to delete user");
         state.loading = false;
       });
   },
